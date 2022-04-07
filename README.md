@@ -47,8 +47,15 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 sudo apt install haproxy
 ```
 
-References:
+# References:
 
 https://snapshooter.com/learn/postgresql/postgresql-cluster-patroni
 
 http://metadata.ftp-master.debian.org/changelogs/main/p/patroni/stable_README.Debian
+
+## Couple good examples of running etcd:
+https://github.com/monzo/etcd3-terraform
+https://monzo.com/blog/2017/11/29/very-robust-etcd
+
+https://github.com/crewjam/etcd-aws
+https://crewjam.com/etcd-aws/
