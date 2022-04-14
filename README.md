@@ -1,12 +1,5 @@
 # patroni-cluster-guide
 
-```
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-sudo apt update
-sudo apt install postgresql-14 patroni
-```
-
 ### On etcd hosts
 ```
 sudo apt update
@@ -17,20 +10,17 @@ docker:x:120:ubuntu
 ```
 
 ```
-REGISTRY=quay.io/coreos/etcd
-# available from v3.2.5
-REGISTRY=gcr.io/etcd-development/etcd
-
 # For each machine
+REGISTRY=gcr.io/etcd-development/etcd
 ETCD_VERSION=latest
-TOKEN=my-etcd-token
+TOKEN=patroni-etcd-cluster
 CLUSTER_STATE=new
-NAME_1=etcd-node-0
-NAME_2=etcd-node-1
-NAME_3=etcd-node-2
-HOST_1=172.31.5.117
-HOST_2=172.31.13.92
-HOST_3=172.31.2.178
+NAME_1=etcd-node-1
+NAME_2=etcd-node-2
+NAME_3=etcd-node-3
+HOST_1=172.31.8.252
+HOST_2=172.31.2.27
+HOST_3=172.31.5.240
 CLUSTER=${NAME_1}=http://${HOST_1}:2380,${NAME_2}=http://${HOST_2}:2380,${NAME_3}=http://${HOST_3}:2380
 DATA_DIR=/var/lib/etcd
 
@@ -77,28 +67,42 @@ docker run \
   --initial-advertise-peer-urls http://${THIS_IP}:2380 --listen-peer-urls http://0.0.0.0:2380 \
   --advertise-client-urls http://${THIS_IP}:2379 --listen-client-urls http://0.0.0.0:2379 \
   --initial-cluster ${CLUSTER} \
-  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN}
-
-ubuntu@ip-172-31-5-117:~$ docker exec etcd /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
-c43bb5f4dd2a997f, started, etcd-node-1, http://172.31.13.92:2380, http://172.31.13.92:2379
-c5ba5b66773ed76b, started, etcd-node-0, http://172.31.5.117:2380, http://172.31.5.117:2379
-efe7fd3df3589921, started, etcd-node-2, http://172.31.2.178:2380, http://172.31.2.178:2379
+  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN} &
 ```
 
+Now you should have a running etcd cluster. Verify by issuing the `member list` command:
+
 ```
-sudo systemctl restart etcd
+docker exec etcd /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
 ```
 
+You should receive some output that looks like this:
+```
+22a32856510ab4ab, started, etcd-node-1, http://172.31.8.252:2380, http://172.31.8.252:2379
+535b53b1c7f00ff3, started, etcd-node-2, http://172.31.2.27:2380, http://172.31.2.27:2379
+915ba6d1a88f616b, started, etcd-node-3, http://172.31.5.240:2380, http://172.31.5.240:2379
+```
+
+## Install postgresql and patroni
+```
+curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+sudo apt update
+sudo apt install postgresql-14 patroni
+```
+
+Now use the cluster info you found above to populate the dcs.yml file:
 sudo vim /etc/patroni/dcs.yml
 ```
 etcd:
-  host: 172.31.61.34:2379
+  hosts: 172.31.8.252:2379,172.31.2.27:2379,172.31.5.240:2379
 ```
 
-# On replica and primary
+# drop the default cluster and recreate with the pg_createconfig_patroni command
 ```
-sudo pg_dropcluster 14 main
-sudo pg_createconfig_patroni 14 main
+NETWORK=$(ip r|grep '/.*link'|awk '{print $1}')
+sudo pg_dropcluster --stop 14 main
+sudo pg_createconfig_patroni --network=${NETWORK} 14 main
 sudo systemctl start patroni@14-main
 ```
 
