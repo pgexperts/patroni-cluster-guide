@@ -98,9 +98,11 @@ etcd:
   hosts: 172.31.8.252:2379,172.31.2.27:2379,172.31.5.240:2379
 ```
 
-# drop the default cluster and recreate with the pg_createconfig_patroni command
+## drop the default cluster and recreate with the pg_createconfig_patroni command
 ```
-NETWORK=$(ip r|grep '/.*link'|awk '{print $1}')
+#NETWORK=$(ip r|grep '/.*link'|awk '{print $1}')
+# Becaure we're using an NLB we need to all the subnets in the VPC
+NETWORK="172.31.0.0/16"
 sudo pg_dropcluster --stop 14 main
 sudo pg_createconfig_patroni --network=${NETWORK} 14 main
 sudo systemctl start patroni@14-main
@@ -108,10 +110,6 @@ sudo systemctl start patroni@14-main
 
 ```
 sudo patronictl -c /etc/patroni/14-main.yml list
-```
-
-```
-sudo apt install haproxy
 ```
 
 # References:
@@ -126,3 +124,4 @@ https://monzo.com/blog/2017/11/29/very-robust-etcd
 
 https://github.com/crewjam/etcd-aws
 https://crewjam.com/etcd-aws/
+
