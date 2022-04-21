@@ -1,5 +1,9 @@
 # patroni-cluster-guide
 
+# Create hosts
+* Create 3 Ubuntu 20.04 instances for the etcd cluster preferably on 3 separate Availability Zones
+* Create 3 Ubuntu 20.04 instances for the postgres/patroni cluster perferably on 3 separate Availability Zones
+
 ### On etcd hosts
 ```
 sudo apt update
