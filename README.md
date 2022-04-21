@@ -18,9 +18,9 @@ CLUSTER_STATE=new
 NAME_1=etcd-node-1
 NAME_2=etcd-node-2
 NAME_3=etcd-node-3
-HOST_1=172.31.8.252
-HOST_2=172.31.2.27
-HOST_3=172.31.5.240
+HOST_1=172.31.15.15
+HOST_2=172.31.14.55
+HOST_3=172.31.2.74
 CLUSTER=${NAME_1}=http://${HOST_1}:2380,${NAME_2}=http://${HOST_2}:2380,${NAME_3}=http://${HOST_3}:2380
 DATA_DIR=/var/lib/etcd
 
@@ -37,7 +37,7 @@ docker run \
   --initial-advertise-peer-urls http://${THIS_IP}:2380 --listen-peer-urls http://0.0.0.0:2380 \
   --advertise-client-urls http://${THIS_IP}:2379 --listen-client-urls http://0.0.0.0:2379 \
   --initial-cluster ${CLUSTER} \
-  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN}
+  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN} &
 
 # For node 2
 THIS_NAME=${NAME_2}
@@ -52,7 +52,7 @@ docker run \
   --initial-advertise-peer-urls http://${THIS_IP}:2380 --listen-peer-urls http://0.0.0.0:2380 \
   --advertise-client-urls http://${THIS_IP}:2379 --listen-client-urls http://0.0.0.0:2379 \
   --initial-cluster ${CLUSTER} \
-  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN}
+  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN} &
 
 # For node 3
 THIS_NAME=${NAME_3}
@@ -105,12 +105,80 @@ etcd:
 NETWORK="172.31.0.0/16"
 sudo pg_dropcluster --stop 14 main
 sudo pg_createconfig_patroni --network=${NETWORK} 14 main
+sudo vim /etc/patroni/14-main.yml
+# uncomment the line with md5 auth for the 172.31.0.0/16 subnet we used above
 sudo systemctl start patroni@14-main
 ```
 
 ```
 sudo patronictl -c /etc/patroni/14-main.yml list
 ```
+
+## create a target group in the AWS Console for the primary (writer) endpoint
+* Click Target Groups on the left in the AWS EC2 Console
+* Client Create target group
+* Choose Instances
+* Give the group a name like "postgresql-primary"
+* For protocol and port, choose TCP and 5432
+* For VPC, choose the VPC that we used above
+* For health check protocol, choose HTTP
+* For health check path, enter `/primary`
+* Click on Advanced Healthcheck Settings
+* Choose override for the Port and enter 8008
+* Change the interval to 10s
+* Add appropriate tags, for example:
+  * project:patroni
+  * service:postgresql
+  * owner:jeff
+* Click Next
+* Check the boxes next to the postgresql/patroni servers
+* Make sure in Ports for selected instances, it is 5432
+* Click Include as Pending Below
+* Click Create Target Group
+
+## create a target group in the AWS Console for the follower (reader) endpoint
+* Click Target Groups on the left in the AWS EC2 Console
+* Client Create target group
+* Choose Instances
+* Give the group a name like "postgresql-follower"
+* For protocol and port, choose TCP and 5432
+* For VPC, choose the VPC that we used above
+* For health check protocol, choose HTTP
+* For health check path, enter `/replica
+* Click on Advanced Healthcheck Settings
+* Choose override for the Port and enter 8008
+* Change the interval to 10s
+* Add appropriate tags, for example:
+  * project:patroni
+  * service:postgresql
+  * owner:jeff
+* Click Next
+* Check the boxes next to the postgresql/patroni servers
+* Make sure in Ports for selected instances, it is 5432
+* Click Include as Pending Below
+* Click Create Target Group
+
+
+## create a network load balancer in the AWS Console
+* Click Load Balancers on the left in the AWS EC2 Console
+* Click Create Load Balancer
+* Click Create under Network Load Balancer
+* Give the load balancer a name such as "postgresql-patroni"
+* Choose Internal as the Schema
+* Choose IPv4 as the IP address type
+* Choose the VPC that you used above
+* Click the box next to all the availability zones
+* In the Listeners and Routers section, select TCP port 5432 and postgresql-primary as the target group
+* In the Listeners and Routers section, select TCP port 5433 and postgresql-follower as the target group
+* Add appropriate tags, for example:
+  * project:patroni
+  * service:postgresql
+  * owner:jeff
+* Click Create load balancer
+
+## Test the connection
+NOTE: You cannot connect through the load balancer to the same host as you are on. That is, if you are on the primary and connect through the load balancer, your connection will hang.
+
 
 # References:
 
