@@ -3,6 +3,8 @@
 # Create hosts
 * Create 3 Ubuntu 20.04 instances for the etcd cluster preferably on 3 separate Availability Zones
 * Create 3 Ubuntu 20.04 instances for the postgres/patroni cluster perferably on 3 separate Availability Zones
+* On the postgres/patroni instances, you need a security group that allows the load balancer to connect to port 5432 (postgresql) and port 8008 (patroni api)
+![security-group-rules](/images/security-group-rules.png)
 
 ### On etcd hosts
 ```
@@ -22,9 +24,9 @@ CLUSTER_STATE=new
 NAME_1=etcd-node-1
 NAME_2=etcd-node-2
 NAME_3=etcd-node-3
-HOST_1=172.31.15.15
-HOST_2=172.31.14.55
-HOST_3=172.31.2.74
+HOST_1=172.31.24.96
+HOST_2=172.31.31.41
+HOST_3=172.31.19.0
 CLUSTER=${NAME_1}=http://${HOST_1}:2380,${NAME_2}=http://${HOST_2}:2380,${NAME_3}=http://${HOST_3}:2380
 DATA_DIR=/var/lib/etcd
 
@@ -122,7 +124,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Target Groups on the left in the AWS EC2 Console
 * Client Create target group
 * Choose Instances
-* Give the group a name like "postgresql-primary"
+* Give the group a name like "patroni-postgres-primary"
 * For protocol and port, choose TCP and 5432
 * For VPC, choose the VPC that we used above
 * For health check protocol, choose HTTP
@@ -176,7 +178,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Choose IPv4 as the IP address type
 * Choose the VPC that you used above
 * Click the box next to all the availability zones
-* In the Listeners and Routers section, select TCP port 5432 and postgresql-primary as the target group
+* In the Listeners and Routers section, select TCP port 5432 and patroni-postgres-primary as the target group
 * In the Listeners and Routers section, select TCP port 5433 and postgresql-follower as the target group
 * Add appropriate tags, for example:
   * project:patroni
