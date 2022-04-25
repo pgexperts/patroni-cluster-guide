@@ -112,8 +112,13 @@ etcd:
 NETWORK="172.31.0.0/16"
 sudo pg_dropcluster --stop 14 main
 sudo pg_createconfig_patroni --network=${NETWORK} 14 main
-sudo vim /etc/patroni/14-main.yml
-# uncomment the line with md5 auth for the 172.31.0.0/16 subnet we used above
+```
+
+Edit the config you just generated and uncomment the line with md5 auth for the 172.31.0.0/16 subnet we used above
+`sudo vim /etc/patroni/14-main.yml`
+
+Start the patroni service
+```
 sudo systemctl start patroni@14-main
 ```
 
