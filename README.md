@@ -1,8 +1,8 @@
 # patroni-cluster-guide
 
 # Create hosts
-* Create 3 Ubuntu 20.04 instances for the etcd cluster preferably on 3 separate Availability Zones
-* Create 3 Ubuntu 20.04 instances for the postgres/patroni cluster perferably on 3 separate Availability Zones
+* Create 3x Ubuntu 20.04 instances for the etcd cluster preferably on 3 separate Availability Zones
+* Create 3x Ubuntu 20.04 instances for the postgres/patroni cluster perferably on 3 separate Availability Zones
 * On the postgres/patroni instances, you need a security group that allows the load balancer to connect to port 5432 (postgresql) and port 8008 (patroni api)
 ![security-group-rules](/images/security-group-rules.png)
 
@@ -17,6 +17,7 @@ docker:x:120:ubuntu
 
 ```
 # For each machine
+# enter the private IP address below in the HOST_* variables
 REGISTRY=gcr.io/etcd-development/etcd
 ETCD_VERSION=latest
 TOKEN=patroni-etcd-cluster
