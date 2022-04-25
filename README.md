@@ -99,7 +99,7 @@ sudo apt install postgresql-14 patroni
 ```
 
 Now use the cluster info you found above to populate the dcs.yml file:
-sudo vim /etc/patroni/dcs.yml
+`sudo vim /etc/patroni/dcs.yml`
 ```
 etcd:
   hosts: 172.31.8.252:2379,172.31.2.27:2379,172.31.5.240:2379
