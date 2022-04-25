@@ -144,6 +144,10 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 
 ![Click create target group](/images/create-target-group.png)
 ![Choose Instances](/images/choose-instances.png)
+![Health Checks](/images/health-checks.png)
+![Target Tags](/images/target-tags.png)
+![Register Targets 1](/images/register-targets-1.png)
+![Register Targets 2](/images/register-targets-2.png)
 
 
 ## Create a target group in the AWS Console for the follower (reader) endpoint
