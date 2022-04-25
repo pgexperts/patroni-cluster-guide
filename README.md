@@ -215,6 +215,11 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 ![Load balancer tags](/images/load-balancer-tags.png)
 ![Load balancer summary](/images/load-balancer-summary.png)
 
+After a little while, you should see that the healthy target on the `patroni-postgres-primary` target group should be the same as the current primary from the `sudo patronictl -c /etc/patroni/14-main.yml list` output and the healthy targets in the `patroni-postgres-follower` target group are the replicas from that list.
+
+![Healthy primary](/images/target-health-primary.png)
+![Healthy follower](/images/target-health-follower.png)
+
 ## Test the connection
 **NOTE:** You cannot connect through the load balancer to the same host as you are on. That is, if you are on the primary and connect through the load balancer, your connection will hang. This is because the target group preserves the client IP address, so it seems as though you are trying to make a connection to yourself, though in actuality, the connection is going through the load balancer, so the tcp stack ignores the connection.
 
