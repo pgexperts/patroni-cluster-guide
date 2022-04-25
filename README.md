@@ -172,6 +172,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Include as Pending Below
 * Click Create Target Group
 
+![Click target groups](/images/target-groups.png)
 ![Click create target group](/images/create-target-group.png)
 ![Choose Instances](/images/choose-instances-follower.png)
 ![Health Checks](/images/health-checks-follower.png)
@@ -183,18 +184,29 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Load Balancers on the left in the AWS EC2 Console
 * Click Create Load Balancer
 * Click Create under Network Load Balancer
-* Give the load balancer a name such as "postgresql-patroni"
+* Give the load balancer a name such as "postgres-patroni"
 * Choose Internal as the Schema
 * Choose IPv4 as the IP address type
 * Choose the VPC that you used above
 * Click the box next to all the availability zones
-* In the Listeners and Routers section, select TCP port 5432 and patroni-postgres-primary as the target group
-* In the Listeners and Routers section, select TCP port 5433 and patroni-postgres-follower as the target group
+* In the Listeners and Routers section, select `TCP` port `5432` and `patroni-postgres-primary` as the target group
+* In the Listeners and Routers section, select `TCP` port `5433` and `patroni-postgres-follower` as the target group
 * Add appropriate tags, for example:
   * project:patroni
   * service:postgresql
   * owner:jeff
 * Click Create load balancer
+
+![Click load balancers](/images/load-balancers.png)
+![Click create load balancer](/images/create-load-balancer.png)
+![Click create network load balancer](/images/create-network-load-balancer.png)
+![Name the load balancer](/images/load-balancer-basic-config.png)
+![Load balancer networking](/images/load-balancer-networking.png)
+![Listener primary](/images/listener-primary.png)
+![Add listener](/images/add-listener.png)
+![Listener follower](/images/listener-follower.png)
+![Load balancer tags](/images/load-balancer-tags.png)
+![Load balancer summary](/images/load-balancer-summary.png)
 
 ## Test the connection
 NOTE: You cannot connect through the load balancer to the same host as you are on. That is, if you are on the primary and connect through the load balancer, your connection will hang. This is because the target group preserves the client IP address, so it seems as though you are trying to make a connection to yourself, though in actuality, the connection is going through the load balancer, so the tcp stack ignores the connection.
