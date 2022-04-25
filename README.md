@@ -154,7 +154,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Target Groups on the left in the AWS EC2 Console
 * Client Create target group
 * Choose Instances
-* Give the group a name like "postgresql-follower"
+* Give the group a name like "patroni-postgres-follower"
 * For protocol and port, choose TCP and 5432
 * For VPC, choose the VPC that we used above
 * For health check protocol, choose HTTP
@@ -172,6 +172,12 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Include as Pending Below
 * Click Create Target Group
 
+![Click create target group](/images/create-target-group.png)
+![Choose Instances](/images/choose-instances-follower.png)
+![Health Checks](/images/health-checks-follower.png)
+![Target Tags](/images/target-tags.png)
+![Register Targets 1](/images/register-targets-1.png)
+![Register Targets 2](/images/register-targets-2.png)
 
 ## Create a network load balancer in the AWS Console
 * Click Load Balancers on the left in the AWS EC2 Console
@@ -183,7 +189,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Choose the VPC that you used above
 * Click the box next to all the availability zones
 * In the Listeners and Routers section, select TCP port 5432 and patroni-postgres-primary as the target group
-* In the Listeners and Routers section, select TCP port 5433 and postgresql-follower as the target group
+* In the Listeners and Routers section, select TCP port 5433 and patroni-postgres-follower as the target group
 * Add appropriate tags, for example:
   * project:patroni
   * service:postgresql
