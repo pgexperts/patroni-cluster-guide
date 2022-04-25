@@ -118,7 +118,7 @@ sudo systemctl start patroni@14-main
 sudo patronictl -c /etc/patroni/14-main.yml list
 ```
 
-## create a target group in the AWS Console for the primary (writer) endpoint
+## Create a target group in the AWS Console for the primary (writer) endpoint
 * Click Target Groups on the left in the AWS EC2 Console
 * Client Create target group
 * Choose Instances
@@ -140,7 +140,11 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Include as Pending Below
 * Click Create Target Group
 
-## create a target group in the AWS Console for the follower (reader) endpoint
+![Click create target group](/images/create-target-group.png)
+![Choose Instances](/images/choose-instances.png)
+
+
+## Create a target group in the AWS Console for the follower (reader) endpoint
 * Click Target Groups on the left in the AWS EC2 Console
 * Client Create target group
 * Choose Instances
@@ -163,7 +167,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 * Click Create Target Group
 
 
-## create a network load balancer in the AWS Console
+## Create a network load balancer in the AWS Console
 * Click Load Balancers on the left in the AWS EC2 Console
 * Click Create Load Balancer
 * Click Create under Network Load Balancer
