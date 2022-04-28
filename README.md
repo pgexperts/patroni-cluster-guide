@@ -2,7 +2,7 @@
 
 # Create hosts
 * Create 3x Ubuntu 20.04 instances for the etcd cluster preferably on 3 separate Availability Zones
-* Create 3x Ubuntu 20.04 instances for the postgres/patroni cluster perferably on 3 separate Availability Zones
+* Create 3x Ubuntu 20.04 instances for the postgres/patroni cluster preferably on 3 separate Availability Zones
 * On the postgres/patroni instances, you need a security group that allows the load balancer to connect to port 5432 (postgresql) and port 8008 (patroni api)
 ![security-group-rules](/images/security-group-rules.png)
 
@@ -108,7 +108,7 @@ etcd:
 ## drop the default cluster and recreate with the pg_createconfig_patroni command
 ```
 #NETWORK=$(ip r|grep '/.*link'|awk '{print $1}')
-# Becaure we're using an NLB we need to all the subnets in the VPC
+# Becaure we're using an NLB we need to add all the subnets in the VPC
 NETWORK="172.31.0.0/16"
 sudo pg_dropcluster --stop 14 main
 sudo pg_createconfig_patroni --network=${NETWORK} 14 main
@@ -129,7 +129,7 @@ sudo patronictl -c /etc/patroni/14-main.yml list
 
 ## Create a target group in the AWS Console for the primary (writer) endpoint
 * Click Target Groups on the left in the AWS EC2 Console
-* Client Create target group
+* Click Create target group
 * Choose Instances
 * Give the group a name like "patroni-postgres-primary"
 * For protocol and port, choose TCP and 5432
