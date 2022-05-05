@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-1"
+  region = "us-west-2"
 }
 
 variable "instance_type" {
@@ -7,11 +7,11 @@ variable "instance_type" {
 }
 
 variable "region" {
-  default = "us-west-1"
+  default = "us-west-2"
 }
 
 variable "azs" {
-  default = ["us-west-1a", "us-west-1b", "us-west-1c"]
+  default = ["us-west-2a", "us-west-2b", "us-west-2c"]
 }
 
 variable "environment" {
@@ -34,7 +34,7 @@ variable "dns" {
   type = map(any)
 
   default = {
-    domain_name = "example.com"
+    domain_name = "pgx-internal.local"
   }
 }
 
@@ -44,4 +44,12 @@ variable "cluster_size" {
 
 variable "ntp_host" {
   default = "0.north-america.pool.ntp.org"
+}
+
+variable "vpc_id" {
+  default = "vpc-00753c68"
+}
+
+variable "aws_sshkey_name" {
+  default = "jeff"
 }

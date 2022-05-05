@@ -75,7 +75,7 @@ resource "aws_lambda_function" "cloudwatch-dns-service" {
     aws_iam_role_policy_attachment.lambda-cloudwatch-dns-service-xray,
   ]
 
-  tracing_config = {
+  tracing_config {
     mode = "Active"
   }
 

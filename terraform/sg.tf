@@ -1,9 +1,9 @@
 resource "aws_security_group" "default" {
   name        = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
   description = "ASG-${var.role}"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id      = data.aws_vpc.default.id
 
-  tags {
+  tags = {
     Name        = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
     role        = "${var.role}"
     environment = "${var.environment}"
@@ -30,13 +30,13 @@ resource "aws_security_group" "default" {
     from_port   = 2379
     to_port     = 2380
     protocol    = "tcp"
-    cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+    cidr_blocks = ["${data.aws_vpc.default.cidr_block}"]
   }
 
   egress {
     from_port   = 2379
     to_port     = 2380
     protocol    = "tcp"
-    cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+    cidr_blocks = ["${data.aws_vpc.default.cidr_block}"]
   }
 }
