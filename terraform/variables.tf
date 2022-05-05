@@ -23,11 +23,7 @@ variable "role" {
 }
 
 variable "ami" {
-  default = "ami-a0ff1ed9"
-}
-
-variable "vpc_cidr" {
-  default = "10.200.0.0/16"
+  default = "ami-a0ff1ed9ami-000077a6d32e18f38"
 }
 
 variable "dns" {
