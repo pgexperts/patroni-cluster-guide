@@ -22,8 +22,9 @@ variable "role" {
   default = "etcd3-test"
 }
 
+# Flatcar Container Linux stable 3139.2.0 (HVM)
 variable "ami" {
-  default = "ami-a0ff1ed9ami-000077a6d32e18f38"
+  default = "ami-04a03ab92f0f9fb0c"
 }
 
 variable "dns" {
