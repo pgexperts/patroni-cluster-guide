@@ -13,11 +13,12 @@ resource "aws_route53_record" "default" {
   records = formatlist("0 0 2380 %s", aws_route53_record.peers[*].name)
 }
 
+# These are dummy records for the lambda function to update
 resource "aws_route53_record" "peers" {
   count   = var.cluster_size
   zone_id = aws_route53_zone.default.id
   name    = "peer-${count.index}.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
   type    = "A"
   ttl     = "1"
-  records = ["198.51.100.${count.index}"]
+  records = ["192.168.0.${count.index}"]
 }
