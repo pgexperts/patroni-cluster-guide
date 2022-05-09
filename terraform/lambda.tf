@@ -101,7 +101,11 @@ resource "aws_cloudwatch_event_rule" "autoscaling" {
     "EC2 Instance Terminate Successful",
     "EC2 Instance Launch Unsuccessful",
     "EC2 Instance Terminate Unsuccessful"
-  ]
+  ],
+  "detail": {
+    "AutoScalingGroupName": [ { "prefix": "peer-" } ]
+  }
+
 }
 PATTERN
 }
