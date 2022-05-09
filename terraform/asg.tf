@@ -17,6 +17,7 @@ resource "aws_launch_configuration" "default" {
 
 resource "aws_autoscaling_group" "default" {
   count                     = var.cluster_size
+  availability_zones        = ["${element(var.azs, count.index)}"]
   name                      = "peer-${count.index}.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
   max_size                  = 1
   min_size                  = 1
@@ -25,7 +26,6 @@ resource "aws_autoscaling_group" "default" {
   health_check_type         = "EC2"
   force_delete              = true
   launch_configuration      = element(aws_launch_configuration.default.*.name, count.index)
-  vpc_zone_identifier       = [for s in data.aws_subnet.subnet_values : s.id]
   load_balancers            = ["${aws_elb.internal.name}"]
   wait_for_capacity_timeout = "0"
 
