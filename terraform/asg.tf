@@ -58,6 +58,10 @@ resource "aws_autoscaling_group" "default" {
     value               = aws_route53_zone.default.id
     propagate_at_launch = false
   }
+
+  depends_on = [
+    aws_lambda_function.cloudwatch-dns-service
+  ]
 }
 
 resource "aws_ebs_volume" "ssd" {
