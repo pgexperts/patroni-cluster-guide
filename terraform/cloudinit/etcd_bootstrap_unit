@@ -12,6 +12,7 @@ ExecStart=/tmp/etcd3-bootstrap \
     -ebs-volume-name=${peer_name}-ssd.${discovery_domain_name} \
     -block-device=/dev/xvdf \
     -aws-region=${region} \
+    -filesystem-arguments "-m 5" \
     -mount-point=/var/lib/etcd
 
 [Install]
