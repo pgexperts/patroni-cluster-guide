@@ -39,6 +39,10 @@ variable "cluster_size" {
   default = 5
 }
 
+variable "ebs_volume_size" {
+  default = 20
+}
+
 variable "ntp_host" {
   default = "0.north-america.pool.ntp.org"
 }

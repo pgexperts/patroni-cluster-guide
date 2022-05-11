@@ -69,7 +69,7 @@ resource "aws_ebs_volume" "ssd" {
   count             = var.cluster_size
   type              = "gp2"
   availability_zone = element(var.azs, count.index)
-  size              = 100
+  size              = var.ebs_volume_size
 
   tags = {
     Name        = "peer-${count.index}-ssd.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
