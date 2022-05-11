@@ -25,6 +25,11 @@ cd terraform
 terraform apply
 ```
 
+You should eventually see some output that looks similar to this:
+```
+Apply complete! Resources: 42 added, 0 changed, 0 destroyed.
+```
+
 ## Create PostgreSQL/Patroni hosts
 * Create 3x Ubuntu 20.04 instances for the postgres/patroni cluster preferably on 3 separate Availability Zones
 * On the postgres/patroni instances, you need a security group that allows the load balancer to connect to port 5432 (postgresql) and port 8008 (patroni api)
