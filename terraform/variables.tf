@@ -31,7 +31,7 @@ variable "dns" {
   type = map(any)
 
   default = {
-    domain_name = "pgx-internal.local"
+    domain_name = "pgx-internal.internal"
   }
 }
 
