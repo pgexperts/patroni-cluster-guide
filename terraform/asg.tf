@@ -8,6 +8,7 @@ resource "aws_launch_configuration" "default" {
   key_name                    = var.aws_sshkey_name
   enable_monitoring           = false
   associate_public_ip_address = true
+  security_groups             = ["${aws_security_group.default.id}"]
   user_data                   = element(data.template_file.cloud-init.*.rendered, count.index)
 
   lifecycle {

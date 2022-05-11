@@ -17,14 +17,6 @@ resource "aws_security_group" "default" {
     self      = true
   }
 
-  # etcd client traffic from ELB
-  egress {
-    from_port = 2379
-    to_port   = 2380
-    protocol  = "tcp"
-    self      = true
-  }
-
   # etcd client traffic from the VPC
   ingress {
     from_port   = 2379
@@ -34,9 +26,10 @@ resource "aws_security_group" "default" {
   }
 
   egress {
-    from_port   = 2379
-    to_port     = 2380
-    protocol    = "tcp"
-    cidr_blocks = ["${data.aws_vpc.default.cidr_block}"]
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
