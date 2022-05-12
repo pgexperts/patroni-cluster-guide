@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda-cloudwatch-dns-service" {
-  name = "lambda-dns-service.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name = "lambda-dns-service.${var.region}.${var.environment}.${var.dns["domain_name"]}"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "lambda-cloudwatch-dns-service" {
-  name = "lambda-cloudwatch-dns-service.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name = "lambda-cloudwatch-dns-service.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   role = aws_iam_role.lambda-cloudwatch-dns-service.name
 
   lifecycle {
@@ -82,7 +82,7 @@ resource "aws_lambda_function" "cloudwatch-dns-service" {
   environment {
     variables = {
       HOSTED_ZONE_ID = "${aws_route53_zone.default.id}"
-      DOMAIN         = "i.${var.environment}.${var.dns["domain_name"]}"
+      DOMAIN         = "${var.environment}.${var.dns["domain_name"]}"
     }
   }
 }

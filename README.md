@@ -27,7 +27,7 @@ terraform apply
 
 You should eventually see some output that looks similar to this:
 ```
-Apply complete! Resources: 42 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 44 added, 0 changed, 0 destroyed.
 ```
 
 ## Create PostgreSQL/Patroni hosts
@@ -49,7 +49,7 @@ Populate the dcs.yml file with the following info
 `sudo vim /etc/patroni/dcs.yml`
 ```
 etcd3:
-  hosts: peer-0.etcd3-test.us-west-2.i.staging.pgx.internal:2379
+  hosts: etcd3-test-lb.us-west-2.staging.pgx.internal:2379
 ```
 
 ## drop the default cluster and recreate with the pg_createconfig_patroni command

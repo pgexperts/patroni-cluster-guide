@@ -1,6 +1,6 @@
 resource "aws_launch_configuration" "default" {
-  count                       = var.cluster_size
-  name_prefix                 = "peer-${count.index}.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}-"
+  count = var.cluster_size
+  #name_prefix                 = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}-"
   image_id                    = var.ami
   instance_type               = var.instance_type
   ebs_optimized               = true
@@ -8,7 +8,7 @@ resource "aws_launch_configuration" "default" {
   key_name                    = var.aws_sshkey_name
   enable_monitoring           = false
   associate_public_ip_address = true
-  security_groups             = ["${aws_security_group.default.id}"]
+  security_groups             = [aws_security_group.default.id]
   user_data                   = element(data.template_file.cloud-init.*.rendered, count.index)
 
   lifecycle {
@@ -19,7 +19,7 @@ resource "aws_launch_configuration" "default" {
 resource "aws_autoscaling_group" "default" {
   count                     = var.cluster_size
   availability_zones        = ["${element(var.azs, count.index)}"]
-  name                      = "peer-${count.index}.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name                      = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   max_size                  = 1
   min_size                  = 1
   desired_capacity          = 1
@@ -27,12 +27,12 @@ resource "aws_autoscaling_group" "default" {
   health_check_type         = "EC2"
   force_delete              = true
   launch_configuration      = element(aws_launch_configuration.default.*.name, count.index)
-  load_balancers            = ["${aws_elb.internal.name}"]
+  target_group_arns         = [aws_lb_target_group.default.arn]
   wait_for_capacity_timeout = "0"
 
   tag {
     key                 = "Name"
-    value               = "peer-${count.index}.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+    value               = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     propagate_at_launch = true
   }
 
@@ -72,7 +72,7 @@ resource "aws_ebs_volume" "ssd" {
   size              = var.ebs_volume_size
 
   tags = {
-    Name        = "peer-${count.index}-ssd.${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+    Name        = "peer-${count.index}-ssd.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     environment = var.environment
     role        = "peer-${count.index}-ssd.${var.role}"
   }

@@ -20,7 +20,7 @@ data "template_file" "etcd_member_unit" {
 
   vars = {
     peer_name             = "peer-${count.index}"
-    discovery_domain_name = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+    discovery_domain_name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     cluster_name          = "${var.role}"
   }
 }
@@ -32,7 +32,7 @@ data "template_file" "etcd_bootstrap_unit" {
   vars = {
     region                     = "${var.region}"
     peer_name                  = "peer-${count.index}"
-    discovery_domain_name      = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+    discovery_domain_name      = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     etcd3_bootstrap_binary_url = "https://${aws_s3_bucket.files.bucket_domain_name}/etcd3-bootstrap-linux-amd64"
   }
 }
