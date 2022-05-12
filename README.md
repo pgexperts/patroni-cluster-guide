@@ -61,7 +61,8 @@ sudo pg_dropcluster --stop 14 main
 sudo pg_createconfig_patroni --network=${NETWORK} 14 main
 ```
 
-Edit the config you just generated```
+Edit the config you just generated
+```
 sudo vim /etc/patroni/14-main.yml
 ```
 
