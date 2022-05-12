@@ -1,6 +1,6 @@
 resource "aws_launch_configuration" "default" {
-  count = var.cluster_size
-  #name_prefix                 = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}-"
+  count                       = var.cluster_size
+  name_prefix                 = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}-"
   image_id                    = var.ami
   instance_type               = var.instance_type
   ebs_optimized               = true
