@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda-cloudwatch-dns-service" {
-  name = "lambda-dns-service.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name = "lambda-dns-service.${var.region}.${var.environment}.${var.dns["domain_name"]}"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "lambda-cloudwatch-dns-service" {
-  name = "lambda-cloudwatch-dns-service.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name = "lambda-cloudwatch-dns-service.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   role = aws_iam_role.lambda-cloudwatch-dns-service.name
 
   lifecycle {
@@ -82,7 +82,7 @@ resource "aws_lambda_function" "cloudwatch-dns-service" {
   environment {
     variables = {
       HOSTED_ZONE_ID = "${aws_route53_zone.default.id}"
-      DOMAIN         = "i.${var.environment}.${var.dns["domain_name"]}"
+      DOMAIN         = "${var.environment}.${var.dns["domain_name"]}"
     }
   }
 }
@@ -126,33 +126,3 @@ resource "aws_lambda_permission" "cloudwatch-dns-service-autoscaling" {
   depends_on    = [aws_lambda_function.cloudwatch-dns-service, aws_cloudwatch_event_rule.autoscaling]
 }
 
-resource "aws_cloudwatch_event_rule" "ec2" {
-  name = "cloudwatch-dns-ec2-${var.environment}"
-
-  event_pattern = <<PATTERN
-{
-  "source": [
-    "aws.ec2"
-  ],
-  "detail-type": [
-    "EC2 Instance State-change Notification"
-  ]
-}
-PATTERN
-}
-
-resource "aws_cloudwatch_event_target" "lambda-cloudwatch-dns-service-ec2" {
-  target_id  = "lambda-cloudwatch-dns-service"
-  rule       = aws_cloudwatch_event_rule.ec2.name
-  arn        = aws_lambda_function.cloudwatch-dns-service.arn
-  depends_on = [aws_lambda_function.cloudwatch-dns-service, aws_cloudwatch_event_rule.ec2]
-}
-
-resource "aws_lambda_permission" "cloudwatch-dns-service-ec2" {
-  statement_id  = "AllowExecutionFromCloudWatchEC2"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.cloudwatch-dns-service.arn
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.ec2.arn
-  depends_on    = [aws_lambda_function.cloudwatch-dns-service, aws_cloudwatch_event_rule.ec2]
-}

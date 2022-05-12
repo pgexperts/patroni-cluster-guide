@@ -1,5 +1,5 @@
 resource "aws_iam_role" "default" {
-  name = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
 
   assume_role_policy = <<EOF
 {
@@ -19,13 +19,13 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "default" {
-  name       = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
-  role       = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name       = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+  role       = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   depends_on = [aws_iam_role.default]
 }
 
 resource "aws_iam_role_policy" "default" {
-  name       = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name       = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   role       = aws_iam_role.default.name
   depends_on = [aws_iam_role.default]
 

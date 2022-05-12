@@ -1,10 +1,10 @@
 resource "aws_security_group" "default" {
-  name        = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+  name        = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   description = "ASG-${var.role}"
   vpc_id      = data.aws_vpc.default.id
 
   tags = {
-    Name        = "${var.role}.${var.region}.i.${var.environment}.${var.dns["domain_name"]}"
+    Name        = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     role        = "${var.role}"
     environment = "${var.environment}"
   }
