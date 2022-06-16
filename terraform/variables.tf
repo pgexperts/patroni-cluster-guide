@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "us-west-2"
-}
-
 variable "instance_type" {
   default = "t3.small"
 }
