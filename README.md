@@ -22,6 +22,7 @@ If you prefer to use a specific named AWS profile, assign that to the `AWS_PROFI
 * `terraform apply` the terraform module in the `terraform` directory
 ```
 cd terraform
+terraform init
 terraform apply
 ```
 
