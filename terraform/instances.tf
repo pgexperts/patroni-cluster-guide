@@ -40,7 +40,7 @@ resource "aws_instance" "patroni" {
     role    = "${var.role}",
     project = "patroni",
     service = "postgresql",
-    owner   = "jeff"
+    owner   = "${var.aws_sshkey_name}",
   }
 }
 

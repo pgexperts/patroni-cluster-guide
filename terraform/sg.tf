@@ -42,7 +42,7 @@ resource "aws_security_group" "patroni" {
   tags = {
     Name        = "pg-patroni-${var.role}",
     service     = "postgresql",
-    owner       = "jeff"
+    owner       = "${var.aws_sshkey_name}",
     role        = "${var.role}"
     environment = "${var.environment}"
   }
