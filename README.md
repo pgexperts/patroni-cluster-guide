@@ -23,8 +23,11 @@ If you prefer to use a specific named AWS profile, assign that to the `AWS_PROFI
 ```
 cd terraform
 terraform init
-terraform apply
+terraform apply -var aws_sshkey_name="jeff"
 ```
+
+(Where "jeff" above is replaced by your SSH key name as listed in ec2's Key
+Pairs.)
 
 You should eventually see some output that looks similar to this:
 ```
