@@ -4,7 +4,7 @@
 ```
 brew install asdf
 asdf plugin add terraform
-asdf install terraform 1.1.9
+asdf install terraform 1.2.3
 ```
 
 You'll also need to add something like this to your `~/.aws/config`:
