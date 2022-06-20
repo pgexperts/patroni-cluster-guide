@@ -5,4 +5,5 @@ Notable changes include:
 * Using a NLB instead of a classic ELB
 * Launching in an existing VPC instead of defining a new one
 * Not using a default security group
+* Removed deprecated template module in favor of templatefile function
 * Launching the patroni/postgresql instances
