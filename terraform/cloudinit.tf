@@ -1,50 +1,41 @@
-data "template_file" "cloud-init" {
-  count    = var.cluster_size
-  template = file("${path.module}/cloudinit/userdata-template.json")
+locals {
+  my_cloud_init_config = [
+    for n in range(var.cluster_size) : templatefile("${path.module}/cloudinit/userdata-template.json", {
+          environment = "${var.environment}"
+          role        = "${var.role}"
+          region      = "${var.region}"
 
-  vars = {
-    environment = "${var.environment}"
-    role        = "${var.role}"
-    region      = "${var.region}"
+          etcd_member_unit = <<-EO1
+              ${templatefile("${path.module}/cloudinit/etcd_member_unit", {
+                    peer_name             = "peer-${n}"
+                    discovery_domain_name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+                    cluster_name          = "${var.role}"
+                  }
+                )
+              }
+            EO1
 
-    etcd_member_unit    = "${element(data.template_file.etcd_member_unit.*.rendered, count.index)}"
-    etcd_bootstrap_unit = "${element(data.template_file.etcd_bootstrap_unit.*.rendered, count.index)}"
-    ntpdate_unit        = "${data.template_file.ntpdate_unit.rendered}"
-    ntpdate_timer_unit  = "${data.template_file.ntpdate_timer_unit.rendered}"
-  }
-}
+          etcd_bootstrap_unit = <<-EO2
+              ${templatefile("${path.module}/cloudinit/etcd_bootstrap_unit", {
+                    region                     = "${var.region}"
+                    peer_name                  = "peer-${n}"
+                    discovery_domain_name      = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+                    etcd3_bootstrap_binary_url = "https://${aws_s3_bucket.files.bucket_domain_name}/etcd3-bootstrap-linux-amd64"
+                  }
+                )
+              }
+            EO2
 
-data "template_file" "etcd_member_unit" {
-  count    = var.cluster_size
-  template = file("${path.module}/cloudinit/etcd_member_unit")
+        ntpdate_unit = <<-EO3
+              ${templatefile("${path.module}/cloudinit/ntpdate_unit", {
+                    ntp_host = "${var.ntp_host}"
+                  }
+                )
+              }
+            EO3
 
-  vars = {
-    peer_name             = "peer-${count.index}"
-    discovery_domain_name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
-    cluster_name          = "${var.role}"
-  }
-}
-
-data "template_file" "etcd_bootstrap_unit" {
-  count    = var.cluster_size
-  template = file("${path.module}/cloudinit/etcd_bootstrap_unit")
-
-  vars = {
-    region                     = "${var.region}"
-    peer_name                  = "peer-${count.index}"
-    discovery_domain_name      = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
-    etcd3_bootstrap_binary_url = "https://${aws_s3_bucket.files.bucket_domain_name}/etcd3-bootstrap-linux-amd64"
-  }
-}
-
-data "template_file" "ntpdate_unit" {
-  template = file("${path.module}/cloudinit/ntpdate_unit")
-
-  vars = {
-    ntp_host = "${var.ntp_host}"
-  }
-}
-
-data "template_file" "ntpdate_timer_unit" {
-  template = file("${path.module}/cloudinit/ntpdate_timer_unit")
+        ntpdate_timer_unit = templatefile("${path.module}/cloudinit/ntpdate_timer_unit", { a = 1 })
+      }
+    )
+  ]
 }
