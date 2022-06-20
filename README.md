@@ -31,7 +31,7 @@ Pairs.)
 
 You should eventually see some output that looks similar to this:
 ```
-Apply complete! Resources: 41 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 45 added, 0 changed, 0 destroyed.
 ```
 The terraform most notably launches a highly available etcd cluster as well as
 3x Patroni/PostgreSQL instances (named pg-patroni-[123]).
