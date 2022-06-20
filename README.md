@@ -27,7 +27,7 @@ terraform apply
 
 You should eventually see some output that looks similar to this:
 ```
-Apply complete! Resources: 44 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 41 added, 0 changed, 0 destroyed.
 ```
 
 ## Create PostgreSQL/Patroni hosts
