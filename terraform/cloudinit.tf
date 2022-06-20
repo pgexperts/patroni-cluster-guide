@@ -1,12 +1,12 @@
 locals {
   my_cloud_init_config = [
-    for n in range(var.cluster_size) : templatefile("${path.module}/cloudinit/userdata-template.json", {
+    for n in range(var.cluster_size) : templatefile("${path.module}/cloudinit/userdata-template.json.tfpl", {
           environment = "${var.environment}"
           role        = "${var.role}"
           region      = "${var.region}"
 
           etcd_member_unit = <<-EO1
-              ${templatefile("${path.module}/cloudinit/etcd_member_unit", {
+              ${templatefile("${path.module}/cloudinit/etcd_member_unit.tfpl", {
                     peer_name             = "peer-${n}"
                     discovery_domain_name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
                     cluster_name          = "${var.role}"
@@ -16,7 +16,7 @@ locals {
             EO1
 
           etcd_bootstrap_unit = <<-EO2
-              ${templatefile("${path.module}/cloudinit/etcd_bootstrap_unit", {
+              ${templatefile("${path.module}/cloudinit/etcd_bootstrap_unit.tfpl", {
                     region                     = "${var.region}"
                     peer_name                  = "peer-${n}"
                     discovery_domain_name      = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
@@ -27,14 +27,14 @@ locals {
             EO2
 
         ntpdate_unit = <<-EO3
-              ${templatefile("${path.module}/cloudinit/ntpdate_unit", {
+              ${templatefile("${path.module}/cloudinit/ntpdate_unit.tfpl", {
                     ntp_host = "${var.ntp_host}"
                   }
                 )
               }
             EO3
 
-        ntpdate_timer_unit = templatefile("${path.module}/cloudinit/ntpdate_timer_unit", { a = 1 })
+        ntpdate_timer_unit = templatefile("${path.module}/cloudinit/ntpdate_timer_unit.tfpl", { a = 1 })
       }
     )
   ]
