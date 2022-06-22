@@ -3,6 +3,11 @@ resource "aws_route53_zone" "default" {
   vpc {
     vpc_id = data.aws_vpc.default.id
   }
+  tags = {
+    role    = "${var.role}",
+    project = "patroni",
+    owner   = "${var.aws_sshkey_name}",
+  }
 }
 
 resource "aws_route53_record" "default" {

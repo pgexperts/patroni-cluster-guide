@@ -4,7 +4,7 @@
 ```
 brew install asdf
 asdf plugin add terraform
-asdf install terraform 1.1.9
+asdf install terraform 1.2.3
 ```
 
 You'll also need to add something like this to your `~/.aws/config`:
@@ -18,31 +18,25 @@ If you prefer to use a specific named AWS profile, assign that to the `AWS_PROFI
 
 ```export AWS_PROFILE=pgx```
 
-## Create etcd cluster
+## Apply terraform
 * `terraform apply` the terraform module in the `terraform` directory
 ```
 cd terraform
-terraform apply
+terraform init
+terraform apply -var aws_sshkey_name="jeff"
 ```
+
+(Where "jeff" above is replaced by your SSH key name as listed in ec2's Key
+Pairs.)
 
 You should eventually see some output that looks similar to this:
 ```
-Apply complete! Resources: 44 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 45 added, 0 changed, 0 destroyed.
 ```
+The terraform most notably launches a highly available etcd cluster as well as
+3x Patroni/PostgreSQL instances (named pg-patroni-[123]).
 
-## Create PostgreSQL/Patroni hosts
-* Create 3x Ubuntu 20.04 instances for the postgres/patroni cluster preferably on 3 separate Availability Zones
-* On the postgres/patroni instances, you need a security group that allows the load balancer to connect to port 5432 (postgresql) and port 8008 (patroni api)
-![security-group-rules](/images/security-group-rules.png)
-
-
-## Install postgresql and patroni
-```
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-sudo apt update
-sudo apt install postgresql-14 patroni
-```
+## Configure patroni on the pg-patroni-* hosts
 
 Populate the dcs.yml file with the following info
 (**NOTE**: remove everything else):

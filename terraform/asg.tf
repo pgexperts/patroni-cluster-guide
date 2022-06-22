@@ -9,7 +9,7 @@ resource "aws_launch_configuration" "default" {
   enable_monitoring           = false
   associate_public_ip_address = true
   security_groups             = [aws_security_group.default.id]
-  user_data                   = element(data.template_file.cloud-init.*.rendered, count.index)
+  user_data                   = element(local.my_cloud_init_config, count.index)
 
   lifecycle {
     create_before_destroy = true
