@@ -25,6 +25,14 @@ resource "aws_security_group" "default" {
     cidr_blocks = ["${data.aws_vpc.default.cidr_block}"]
   }
 
+  # SSH traffic from the VPC
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${data.aws_vpc.default.cidr_block}"]
+  }
+
   egress {
     from_port        = 0
     to_port          = 0
