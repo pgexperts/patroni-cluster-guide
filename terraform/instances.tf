@@ -34,7 +34,7 @@ resource "aws_instance" "patroni" {
       sudo apt-get --assume-yes update
       sudo apt-get --assume-yes install postgresql-14 patroni
       sudo pg_dropcluster --stop 14 main
-      printf "etcd3:\n  hosts: ${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}:2379" | sudo tee /etc/patroni/dcs.yml
+      printf "etcd3:\n  hosts: ${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}:2379\n" | sudo tee /etc/patroni/dcs.yml
       sudo pg_createconfig_patroni --network=${data.aws_vpc.default.cidr_block} 14 main
       sed -i 's:#      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:' /etc/patroni/14-main.yml
       sudo systemctl start patroni@14-main
