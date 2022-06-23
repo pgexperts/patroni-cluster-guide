@@ -35,43 +35,14 @@ Apply complete! Resources: 45 added, 0 changed, 0 destroyed.
 ```
 The terraform most notably launches a highly available etcd cluster as well as
 3x Patroni/PostgreSQL instances (named pg-patroni-[123]).
+After installing PostgreSQL and Patroni packages, it drops the default
+PostgreSQL cluster. It then configures Patroni to talk to the etcd cluster above by editing
+`/etc/patroni/dcs.yml`. and then running 
+`sudo pg_createconfig_patroni --network=${NETWORK} 14 main`
+It then seds that config to allow md5 connections from the VPC's CIDR address
+and starts the Patroni cluster.
 
-## Configure patroni on the pg-patroni-* hosts
-
-Populate the dcs.yml file with the following info
-(**NOTE**: remove everything else):
-`sudo vim /etc/patroni/dcs.yml`
-```
-etcd3:
-  hosts: etcd3-test-lb.us-west-2.staging.pgx.internal:2379
-```
-
-## drop the default cluster and recreate with the pg_createconfig_patroni command
-```
-#NETWORK=$(ip r|grep '/.*link'|awk '{print $1}')
-# Becaure we're using an NLB we need to add all the subnets in the VPC
-NETWORK="172.31.0.0/16"
-sudo pg_dropcluster --stop 14 main
-sudo pg_createconfig_patroni --network=${NETWORK} 14 main
-```
-
-Edit the config you just generated
-```
-sudo vim /etc/patroni/14-main.yml
-```
-
-and uncomment the line with md5 auth for the 172.31.0.0/16 subnet we used above
-
-```
-#      - host    all             all             172.31.0.0/16               md5
-```
-
-Start the patroni service
-```
-sudo systemctl start patroni@14-main
-```
-
-Check the status on your patroni cluster with `patronictl`:
+## Check the status on your patroni cluster with `patronictl`:
 ```
 sudo patronictl -c /etc/patroni/14-main.yml list
 ```
@@ -86,6 +57,15 @@ You should get output that looks like:
 | ip-172-31-14-50  | 172.31.14.50  | Replica | running |  1 |         0 |
 +------------------+---------------+---------+---------+----+-----------+
 ```
+
+If you get warnings that look like this:
+```
+2022-06-23 15:44:35,571 - WARNING - failed to resolve host etcd3-test-lb.us-west-2.staging.pgx.internal: [Errno -2] Name or service not known
+2022-06-23 15:44:35,571 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=0, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2eed4b2e60>: Failed to establish a new connection: getaddrinfo returns an empty list')': /version
+```
+Just hit ctrl-c and try again in a few minutes. It takes a little while for the
+route53 records to propagate and start resolving on the newly created
+instances.
 
 ## Create a target group in the AWS Console for the primary (writer) endpoint
 * Click Target Groups on the left in the AWS EC2 Console
