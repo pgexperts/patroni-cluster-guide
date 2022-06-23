@@ -47,5 +47,9 @@ resource "aws_instance" "patroni" {
     service = "postgresql",
     owner   = "${var.aws_sshkey_name}",
   }
+
+  depends_on = [
+    aws_autoscaling_group.default, aws_lb.internal, aws_route53_record.internal
+  ]
 }
 
