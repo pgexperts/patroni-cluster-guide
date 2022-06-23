@@ -55,8 +55,8 @@ resource "aws_route53_record" "internal" {
   }
 }
 
-resource "aws_lb" "postgresql-primary" {
-  name               = "${var.role}-internal-${var.environment}"
+resource "aws_lb" "postgresql" {
+  name               = "postgresql-internal-${var.environment}"
   subnets            = data.aws_subnets.default.ids
   load_balancer_type = "network"
   internal           = true
@@ -90,7 +90,7 @@ resource "aws_lb_target_group" "postgresql-primary" {
 }
 
 resource "aws_lb_listener" "postgresql-primary" {
-  load_balancer_arn = aws_lb.postgresql-primary.arn
+  load_balancer_arn = aws_lb.postgresql.arn
   port              = 5432
   protocol          = "TCP"
 
@@ -108,33 +108,19 @@ resource "aws_lb_target_group_attachment" "postgresql-primary" {
 
 resource "aws_route53_record" "postgresql-primary" {
   zone_id = aws_route53_zone.default.id
-  name    = "postgresql-primary-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+  name    = "postgresql-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   type    = "A"
 
   alias {
-    name                   = aws_lb.postgresql-primary.dns_name
-    zone_id                = aws_lb.postgresql-primary.zone_id
+    name                   = aws_lb.postgresql.dns_name
+    zone_id                = aws_lb.postgresql.zone_id
     evaluate_target_health = false
-  }
-}
-
-resource "aws_lb" "postgresql-replica" {
-  name               = "${var.role}-internal-${var.environment}"
-  subnets            = data.aws_subnets.default.ids
-  load_balancer_type = "network"
-  internal           = true
-  idle_timeout       = 3600
-
-  tags = {
-    Name        = "postgres-${var.region}.${var.environment}.${var.dns["domain_name"]}"
-    environment = var.environment
-    role        = var.role
   }
 }
 
 resource "aws_lb_target_group" "postgresql-replica" {
   name     = "pg-replica-tg-${var.environment}"
-  port     = 5433
+  port     = 5432
   protocol = "TCP"
   vpc_id   = var.vpc_id
   tags = {
@@ -153,8 +139,8 @@ resource "aws_lb_target_group" "postgresql-replica" {
 }
 
 resource "aws_lb_listener" "postgresql-replica" {
-  load_balancer_arn = aws_lb.postgresql-replica.arn
-  port              = 5432
+  load_balancer_arn = aws_lb.postgresql.arn
+  port              = 5433
   protocol          = "TCP"
 
   default_action {
@@ -168,16 +154,3 @@ resource "aws_lb_target_group_attachment" "postgresql-replica" {
   target_group_arn = aws_lb_target_group.postgresql-replica.arn
   target_id        = aws_instance.pg-patroni[count.index].id
 }
-
-resource "aws_route53_record" "postgresql-replica" {
-  zone_id = aws_route53_zone.default.id
-  name    = "postgresql-replica-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.postgresql-replica.dns_name
-    zone_id                = aws_lb.postgresql-replica.zone_id
-    evaluate_target_health = false
-  }
-}
-
