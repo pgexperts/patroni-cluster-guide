@@ -13,7 +13,7 @@ ExecStart=/tmp/etcd3-bootstrap \
     -block-device=/dev/xvdf \
     -aws-region=${region} \
     -filesystem-arguments "-m 5" \
-    -mount-point=/var/lib/etcd
+    -mount-point=${etcd_mount_point}
 
 [Install]
 WantedBy=etcd-member.service

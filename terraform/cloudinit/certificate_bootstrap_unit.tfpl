@@ -1,0 +1,14 @@
+[Unit]
+Wants=network-online.target
+After=network-online.target etcd-bootstrap.service
+Before=etcd-member.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/docker run -v /tmp:/tmp amazon/aws-cli s3 cp ${certificate_bootstrap_url} /tmp/certificate-bootstrap.sh
+ExecStartPre=/usr/bin/chmod +x /tmp/certificate-bootstrap.sh
+RemainAfterExit=true
+ExecStart=/tmp/certificate-bootstrap.sh
+
+[Install]
+WantedBy=etcd-member.service

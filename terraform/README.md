@@ -10,3 +10,5 @@ Notable changes include:
 In addition to etcd, this module also:
 * Launches the Patroni/PostgreSQL instances
 * Configures them via user-data
+
+The TLS part of this terraform is based heavily on https://github.com/hashicorp/terraform-aws-vault/tree/master/modules/private-tls-cert
