@@ -1,1 +1,2 @@
-* Make the dcs (distributed consensus store) highly available. Currently it's running etcd in docker containers with no init script.
+* Update the terraform resource names to make more sense now that we do more
+    than just install etcd
