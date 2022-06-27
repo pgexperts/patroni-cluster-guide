@@ -42,7 +42,16 @@ PostgreSQL cluster. It then configures Patroni to talk to the etcd cluster above
 It then seds that config to allow md5 connections from the VPC's CIDR address
 and starts the Patroni cluster.
 
+The etcd instances only allow SSH from IP addresses inside the VPC
+
+## Check the status on your etcd cluster with `etcdctl`:
+On one of the peer-*.etcd3-test instances:
+```
+docker exec etcd-member /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
+```
+
 ## Check the status on your patroni cluster with `patronictl`:
+On one of the patroni-pg-* instances:
 ```
 sudo patronictl -c /etc/patroni/14-main.yml list
 ```
