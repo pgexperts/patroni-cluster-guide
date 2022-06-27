@@ -6,6 +6,8 @@ Notable changes include:
 * Launching in an existing VPC instead of defining a new one
 * Not using a default security group
 * Removed deprecated template module in favor of templatefile function
+* Uses a local list variable to setup the SRV DNS entry instead of creating
+    dummy entries to use as data.
 
 In addition to etcd, this module also:
 * Launches the Patroni/PostgreSQL instances
