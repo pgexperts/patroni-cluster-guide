@@ -23,23 +23,22 @@ credential in 1Password named `PGX AWS Key` that includes text fields
 named `aws_access_key_id` and `aws_secret_access_key`. To do this in 1Password,
 follow this workflow:
 
-Click +New Item
+Click `+New Item`
 ![Click +New Item](/images/1password-1.png)
 
-Click API Credential
-![Click API Credential](/images/1password-2.png)
+Click `API Credential +`
+![Click API Credential +](/images/1password-2.png)
 
-Name it PGX AWS Key and click + add another field
+Name it `PGX AWS Key `and click `+ add another field`
 ![Name it PGX AWS Key and click + add another field](/images/1password-3.png)
 
-Click Text
+Click `Text`
 ![Click Text](/images/1password-4.png)
 
-Enter aws_access_key_id on the top of the field and the key id value in the bottom then click add another field
+Enter `aws_access_key_id` on the top of the field and the key id value in the bottom then click add another field
 ![Enter aws_access_key_id on the top of the field and the key id value in the bottom then click add another field](/images/1password-5.png)
 
-
-Click Text
+Click `Text`
 ![Click Text](/images/1password-4.png)
 
 Enter `aws_secret_access_key` on the top of the field and the key value in the bottom then click save
