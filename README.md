@@ -40,7 +40,15 @@ PostgreSQL cluster. It then configures Patroni to talk to the etcd cluster above
 `/etc/patroni/dcs.yml`. and then running 
 `sudo pg_createconfig_patroni --network=${NETWORK} 14 main`
 It then seds that config to allow md5 connections from the VPC's CIDR address
-and starts the Patroni cluster.
+as well as setting a random password for the postgres and replication users.
+It then starts the Patroni cluster.
+
+After your terraform is applied, you can use the `terraform output` command to
+display the `postgres` password like so:
+```
+terraform output postgres_password
+```
+NOTE: the quotes are not part of the password.
 
 ## Check the status on your patroni cluster with `patronictl`:
 ```
