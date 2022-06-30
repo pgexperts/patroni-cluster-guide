@@ -42,7 +42,7 @@ PostgreSQL cluster. It then configures Patroni to talk to the etcd cluster above
 It then seds that config to allow md5 connections from the VPC's CIDR address
 and starts the Patroni cluster.
 
-The etcd instances only allow SSH from IP addresses inside the VPC
+The etcd instances only allow SSH from IP addresses inside the VPC.
 
 ## Check the status on your etcd cluster with `etcdctl`:
 **NOTE:** the etcd instances use flatcar linux and the ssh username is `core`.
