@@ -42,8 +42,8 @@ resource "aws_security_group" "default" {
   }
 }
 
-resource "aws_security_group" "patroni" {
-  name        = "pg-patroni-${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+resource "aws_security_group" "pg-patroni" {
+  name        = "pg-patroni-${var.region}.${var.environment}.${var.dns["domain_name"]}"
   description = "PostgreSQL and Patroni from VPC"
   vpc_id      = data.aws_vpc.default.id
 

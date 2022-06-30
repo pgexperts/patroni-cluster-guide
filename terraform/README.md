@@ -11,3 +11,5 @@ Notable changes include:
 In addition to etcd, this module also:
 * Launches the Patroni/PostgreSQL instances
 * Configures them via user-data
+* Adds them to LB Target Groups such that the NLB listeners on port 5432 and
+    5433 forward to the primary and replica respectively
