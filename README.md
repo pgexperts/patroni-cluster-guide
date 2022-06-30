@@ -31,7 +31,7 @@ Pairs.)
 
 You should eventually see some output that looks similar to this:
 ```
-Apply complete! Resources: 45 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 59 added, 0 changed, 0 destroyed.
 ```
 The terraform most notably launches a highly available etcd cluster as well as
 3x Patroni/PostgreSQL instances (named pg-patroni-[123]).
@@ -42,6 +42,8 @@ PostgreSQL cluster. It then configures Patroni to talk to the etcd cluster above
 It then seds that config to allow md5 connections from the VPC's CIDR address
 as well as setting a random password for the postgres and replication users.
 It then starts the Patroni cluster.
+Finally, it creates load balancers and target groups to access the postgresql
+primary and replicas on ports 5432 and 5433 respectively.
 
 After your terraform is applied, you can use the `terraform output` command to
 display the `postgres` password like so:
@@ -74,6 +76,18 @@ If you get warnings that look like this:
 Just hit ctrl-c and try again in a few minutes. It takes a little while for the
 route53 records to propagate and start resolving on the newly created
 instances.
+
+## Check the postgresql connectivity through the load balancer
+Port 5432 will be the primary and 5433 will be the replicas.
+**NOTE:** You'll need to set a password for the postgres user on the primary first.
+```
+psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5432 -U postgres postgres
+psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5433 -U postgres postgres
+```
+
+
+## Here's how you would configure the load balancers by hand in the console
+
 
 ## Create a target group in the AWS Console for the primary (writer) endpoint
 * Click Target Groups on the left in the AWS EC2 Console

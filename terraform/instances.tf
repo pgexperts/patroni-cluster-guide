@@ -14,6 +14,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+<<<<<<< HEAD
 resource "random_password" "postgres" {
   length  = 32
   special = false
@@ -24,7 +25,7 @@ resource "random_password" "replicator" {
   special = false
 }
 
-resource "aws_instance" "patroni" {
+resource "aws_instance" "pg-patroni" {
   count             = 3
   ami               = data.aws_ami.ubuntu.id
   instance_type     = "t3.small"
@@ -33,7 +34,7 @@ resource "aws_instance" "patroni" {
 
   vpc_security_group_ids = [
     aws_security_group.default.id,
-    aws_security_group.patroni.id
+    aws_security_group.pg-patroni.id
   ]
 
   user_data = <<-EOT
