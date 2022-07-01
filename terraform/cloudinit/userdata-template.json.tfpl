@@ -16,6 +16,12 @@
                 }
             },
             {
+                "name": "certificate-bootstrap.service",
+                "enable": true,
+                "contents": ${jsonencode(certificate_bootstrap_unit)
+                }
+            },
+            {
                 "name": "etcd-member.service",
                 "enable": true,
                 "dropins": [
