@@ -5,6 +5,7 @@ Notable changes include:
 * Using a NLB instead of a classic ELB
 * Launching in an existing VPC instead of defining a new one
 * Not using a default security group
+  - Thus SSH access to the hosts is only allowed from the VPC
 * Removed deprecated template module in favor of templatefile function
 * Uses a local list variable to setup the SRV DNS entry instead of creating
     dummy entries to use as data.
