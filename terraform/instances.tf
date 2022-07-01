@@ -46,6 +46,9 @@ resource "aws_instance" "pg-patroni" {
       pg_dropcluster --stop 14 main
       printf "etcd3:\n  hosts: ${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}:2379\n" | tee /etc/patroni/dcs.yml
       pg_createconfig_patroni --network=${data.aws_vpc.default.cidr_block} 14 main
+      echo '${tls_self_signed_cert.ca.cert_pem}' | tee '${var.patroni_ca_cert_path}' && chmod ${var.permissions} '${var.patroni_ca_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_ca_cert_path}'
+      echo '${tls_private_key.pg-patroni.private_key_pem}' | tee '${var.patroni_key_path}' && chmod ${var.permissions} '${var.patroni_key_path}' && chown ${var.patroni_cert_owner} '${var.patroni_key_path}'
+      echo '${tls_locally_signed_cert.pg-patroni.cert_pem}' | tee '${var.patroni_cert_path}' && chmod ${var.permissions} '${var.patroni_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_cert_path}'
       sed -i 's:#      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:' /etc/patroni/14-main.yml
       sed -i '/username: "postgres"/{n;s/password:.*$/password: "${random_password.postgres.result}"/}' /etc/patroni/14-main.yml
       sed -i '/username: "replicator"/{n;s/password:.*$/password: "${random_password.replicator.result}"/}' /etc/patroni/14-main.yml
