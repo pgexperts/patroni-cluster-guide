@@ -14,7 +14,6 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-<<<<<<< HEAD
 resource "random_password" "postgres" {
   length  = 32
   special = false
