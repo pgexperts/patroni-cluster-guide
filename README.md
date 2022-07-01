@@ -44,7 +44,17 @@ and starts the Patroni cluster.
 Finally, it creates load balancers and target groups to access the postgresql
 primary and replicas on ports 5432 and 5433 respectively.
 
+The etcd instances only allow SSH from IP addresses inside the VPC.
+
+## Check the status on your etcd cluster with `etcdctl`:
+**NOTE:** the etcd instances use flatcar linux and the ssh username is `core`.
+On one of the peer-*.etcd3-test instances:
+```
+docker exec etcd-member /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
+```
+
 ## Check the status on your patroni cluster with `patronictl`:
+On one of the patroni-pg-* instances:
 ```
 sudo patronictl -c /etc/patroni/14-main.yml list
 ```
