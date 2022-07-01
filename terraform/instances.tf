@@ -35,6 +35,9 @@ resource "aws_instance" "pg-patroni" {
       sudo apt-get --assume-yes install postgresql-14 patroni
       sudo pg_dropcluster --stop 14 main
       printf "etcd3:\n  hosts: ${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}:2379\n" | sudo tee /etc/patroni/dcs.yml
+      echo '${tls_self_signed_cert.ca.cert_pem}' | sudo tee '${var.patroni_ca_cert_path}' && chmod ${var.permissions} '${var.patroni_ca_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_ca_cert_path}'
+      echo '${tls_private_key.pg-patroni.private_key_pem}' | sudo tee '${var.patroni_key_path}' && chmod ${var.permissions} '${var.patroni_key_path}' && chown ${var.patroni_cert_owner} '${var.patroni_key_path}'
+      echo '${tls_locally_signed_cert.pg-patroni.cert_pem}' | sudo tee '${var.patroni_cert_path}' && chmod ${var.permissions} '${var.patroni_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_cert_path}'
       sudo pg_createconfig_patroni --network=${data.aws_vpc.default.cidr_block} 14 main
       sed -i 's:#      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:' /etc/patroni/14-main.yml
       sudo systemctl start patroni@14-main

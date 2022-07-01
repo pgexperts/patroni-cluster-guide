@@ -15,3 +15,38 @@ resource "aws_s3_object" "etcd3-bootstrap-linux-amd64" {
   acl          = "public-read"
   content_type = "application/octet-stream"
 }
+
+resource "aws_s3_object" "certificate-bootstrap" {
+  bucket = aws_s3_bucket.files.id
+  key    = "certificate-bootstrap.sh"
+  content = templatefile("${path.module}/templates/certificate-bootstrap.sh", {
+    etcd_mount_point = var.etcd_mount_point
+    ca_cert_pem      = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-ca-cert.id}"
+    key_pem          = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-tls-key.id}"
+    cert_pem         = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-tls-cert.id}"
+    etcd_cert_owner  = var.etcd_cert_owner
+    }
+  )
+  content_type = "text/plain"
+}
+
+resource "aws_s3_object" "etcd-ca-cert" {
+  bucket       = aws_s3_bucket.files.id
+  key          = "etcd-ca-cert.pem"
+  content      = tls_self_signed_cert.ca.cert_pem
+  content_type = "text/plain"
+}
+
+resource "aws_s3_object" "etcd-tls-key" {
+  bucket       = aws_s3_bucket.files.id
+  key          = "key.pem"
+  content      = tls_private_key.etcd.private_key_pem
+  content_type = "text/plain"
+}
+
+resource "aws_s3_object" "etcd-tls-cert" {
+  bucket       = aws_s3_bucket.files.id
+  key          = "cert.pem"
+  content      = tls_locally_signed_cert.etcd.cert_pem
+  content_type = "text/plain"
+}
