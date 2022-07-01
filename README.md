@@ -52,7 +52,17 @@ terraform output postgres_password
 ```
 NOTE: the quotes are not part of the password.
 
+## Check the status on your etcd cluster with `etcdctl`:
+**NOTE:** the etcd instances use flatcar linux and the ssh username is `core`.
+**ALSO** the etcd instances only allow SSH from IP addresses inside the VPC.
+
+On one of the peer-*.etcd3-test instances:
+```
+docker exec etcd-member /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
+```
+
 ## Check the status on your patroni cluster with `patronictl`:
+On one of the patroni-pg-* instances:
 ```
 sudo patronictl -c /etc/patroni/14-main.yml list
 ```
