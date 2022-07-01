@@ -1,3 +1,7 @@
+locals {
+  peer_name_list = [for num in range(var.cluster_size) : "0 0 2380 peer-${num}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"]
+}
+
 resource "aws_route53_zone" "default" {
   name = "${var.environment}.${var.dns["domain_name"]}"
   vpc {
@@ -15,15 +19,5 @@ resource "aws_route53_record" "default" {
   name    = "_etcd-server._tcp.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   type    = "SRV"
   ttl     = "1"
-  records = formatlist("0 0 2380 %s", aws_route53_record.peers[*].name)
-}
-
-# These are dummy records for the lambda function to update
-resource "aws_route53_record" "peers" {
-  count   = var.cluster_size
-  zone_id = aws_route53_zone.default.id
-  name    = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
-  type    = "A"
-  ttl     = "1"
-  records = ["192.168.0.${count.index}"]
+  records = local.peer_name_list
 }
