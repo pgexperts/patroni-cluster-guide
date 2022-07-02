@@ -9,6 +9,7 @@ resource "aws_lb" "internal" {
     Name        = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     environment = var.environment
     role        = var.role
+    owner       = "${var.aws_sshkey_name}"
   }
 }
 
@@ -21,6 +22,7 @@ resource "aws_lb_target_group" "default" {
     Name        = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
     environment = var.environment
     role        = var.role
+    owner       = "${var.aws_sshkey_name}"
   }
   health_check {
     healthy_threshold   = 3
@@ -66,6 +68,7 @@ resource "aws_lb" "postgresql" {
     Name        = "postgres-${var.region}.${var.environment}.${var.dns["domain_name"]}"
     environment = var.environment
     role        = var.role
+    owner       = "${var.aws_sshkey_name}"
   }
 }
 
@@ -78,6 +81,7 @@ resource "aws_lb_target_group" "postgresql-primary" {
     Name        = "postgresql-primary-${var.region}.${var.environment}.${var.dns["domain_name"]}"
     environment = var.environment
     role        = "postgresql-primary"
+    owner       = "${var.aws_sshkey_name}"
   }
   health_check {
     healthy_threshold   = 3
@@ -127,6 +131,7 @@ resource "aws_lb_target_group" "postgresql-replica" {
     Name        = "postgresql-replica-${var.region}.${var.environment}.${var.dns["domain_name"]}"
     environment = var.environment
     role        = "postgresql-replica"
+    owner       = "${var.aws_sshkey_name}"
   }
   health_check {
     healthy_threshold   = 3
