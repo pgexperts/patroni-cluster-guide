@@ -14,6 +14,16 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "random_password" "postgres" {
+  length  = 32
+  special = false
+}
+
+resource "random_password" "replicator" {
+  length  = 32
+  special = false
+}
+
 resource "aws_instance" "pg-patroni" {
   count             = 3
   ami               = data.aws_ami.ubuntu.id
@@ -28,19 +38,21 @@ resource "aws_instance" "pg-patroni" {
 
   user_data = <<-EOT
       #! /bin/bash
-      sudo apt-get --assume-yes install curl ca-certificates gnupg
-      curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-      sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-      sudo apt-get --assume-yes update
-      sudo apt-get --assume-yes install postgresql-14 patroni
-      sudo pg_dropcluster --stop 14 main
-      printf "etcd3:\n  hosts: ${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}:2379\n" | sudo tee /etc/patroni/dcs.yml
-      echo '${tls_self_signed_cert.ca.cert_pem}' | sudo tee '${var.patroni_ca_cert_path}' && chmod ${var.permissions} '${var.patroni_ca_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_ca_cert_path}'
-      echo '${tls_private_key.pg-patroni.private_key_pem}' | sudo tee '${var.patroni_key_path}' && chmod ${var.permissions} '${var.patroni_key_path}' && chown ${var.patroni_cert_owner} '${var.patroni_key_path}'
-      echo '${tls_locally_signed_cert.pg-patroni.cert_pem}' | sudo tee '${var.patroni_cert_path}' && chmod ${var.permissions} '${var.patroni_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_cert_path}'
-      sudo pg_createconfig_patroni --network=${data.aws_vpc.default.cidr_block} 14 main
+      apt-get --assume-yes install curl ca-certificates gnupg
+      curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
+      sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+      apt-get --assume-yes update
+      apt-get --assume-yes install postgresql-14 patroni
+      pg_dropcluster --stop 14 main
+      printf "etcd3:\n  hosts: ${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}:2379\n" | tee /etc/patroni/dcs.yml
+      pg_createconfig_patroni --network=${data.aws_vpc.default.cidr_block} 14 main
+      echo '${tls_self_signed_cert.ca.cert_pem}' | tee '${var.patroni_ca_cert_path}' && chmod ${var.permissions} '${var.patroni_ca_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_ca_cert_path}'
+      echo '${tls_private_key.pg-patroni.private_key_pem}' | tee '${var.patroni_key_path}' && chmod ${var.permissions} '${var.patroni_key_path}' && chown ${var.patroni_cert_owner} '${var.patroni_key_path}'
+      echo '${tls_locally_signed_cert.pg-patroni.cert_pem}' | tee '${var.patroni_cert_path}' && chmod ${var.permissions} '${var.patroni_cert_path}' && chown ${var.patroni_cert_owner} '${var.patroni_cert_path}'
       sed -i 's:#      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:      - host    all             all             ${data.aws_vpc.default.cidr_block}               md5:' /etc/patroni/14-main.yml
-      sudo systemctl start patroni@14-main
+      sed -i '/username: "postgres"/{n;s/password:.*$/password: "${random_password.postgres.result}"/}' /etc/patroni/14-main.yml
+      sed -i '/username: "replicator"/{n;s/password:.*$/password: "${random_password.replicator.result}"/}' /etc/patroni/14-main.yml
+      systemctl start patroni@14-main
     EOT
 
   tags = {

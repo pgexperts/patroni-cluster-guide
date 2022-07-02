@@ -40,14 +40,22 @@ PostgreSQL cluster. It then configures Patroni to talk to the etcd cluster above
 `/etc/patroni/dcs.yml`. and then running 
 `sudo pg_createconfig_patroni --network=${NETWORK} 14 main`
 It then seds that config to allow md5 connections from the VPC's CIDR address
-and starts the Patroni cluster.
+as well as setting a random password for the postgres and replication users.
+It then starts the Patroni cluster.
 Finally, it creates load balancers and target groups to access the postgresql
 primary and replicas on ports 5432 and 5433 respectively.
 
-The etcd instances only allow SSH from IP addresses inside the VPC.
+After your terraform is applied, you can use the `terraform output` command to
+display the `postgres` password like so:
+```
+terraform output postgres_password
+```
+NOTE: the quotes are not part of the password.
 
 ## Check the status on your etcd cluster with `etcdctl`:
 **NOTE:** the etcd instances use flatcar linux and the ssh username is `core`.
+**ALSO** the etcd instances only allow SSH from IP addresses inside the VPC.
+
 On one of the peer-*.etcd3-test instances:
 ```
 docker exec etcd-member /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
