@@ -18,6 +18,33 @@ If you prefer to use a specific named AWS profile, assign that to the `AWS_PROFI
 
 ```export AWS_PROFILE=pgx```
 
+In order for the above `~/.aws/config` to work, you need to create an API
+credential in 1Password named `PGX AWS Key` that includes text fields
+named `aws_access_key_id` and `aws_secret_access_key`. To do this in 1Password,
+follow this workflow:
+
+Click `+New Item`
+![Click +New Item](/images/1password-1.png)
+
+Click `API Credential +`
+![Click API Credential +](/images/1password-2.png)
+
+Name it `PGX AWS Key `and click `+ add another field`
+![Name it PGX AWS Key and click + add another field](/images/1password-3.png)
+
+Click `Text`
+![Click Text](/images/1password-4.png)
+
+Enter `aws_access_key_id` on the top of the field and the key id value in the bottom then click add another field
+![Enter aws_access_key_id on the top of the field and the key id value in the bottom then click add another field](/images/1password-5.png)
+
+Click `Text`
+![Click Text](/images/1password-4.png)
+
+Enter `aws_secret_access_key` on the top of the field and the key value in the bottom then click save
+![Enter aws_secret_access_key on the top of the field and the key value in the bottom then click save](/images/1password-6.png)
+
+
 ## Apply terraform
 * `terraform apply` the terraform module in the `terraform` directory
 ```
