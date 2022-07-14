@@ -1,5 +1,6 @@
 locals {
   ca_common_name = "ca.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+  etcd_name_list = [for num in range(var.cluster_size) : "peer-${num}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -40,10 +41,11 @@ resource "tls_private_key" "etcd" {
 resource "tls_cert_request" "etcd" {
   private_key_pem = tls_private_key.etcd.private_key_pem
 
-  dns_names = ["${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"]
+  dns_names    = concat(local.etcd_name_list, [aws_route53_record.internal.name])
+  ip_addresses = ["127.0.0.1"]
 
   subject {
-    common_name  = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+    common_name  = aws_route53_record.internal.name
     organization = var.organization_name
   }
 }

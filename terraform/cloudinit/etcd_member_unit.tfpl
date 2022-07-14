@@ -6,14 +6,22 @@ Conflicts=etcd2.service
 
 [Service]
 EnvironmentFile=/run/metadata/coreos
-Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS=http://${peer_name}.${discovery_domain_name}:2380"
+Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS=https://${peer_name}.${discovery_domain_name}:2380"
 Environment="ETCD_INITIAL_CLUSTER_TOKEN=${cluster_name}"
-Environment="ETCD_ADVERTISE_CLIENT_URLS=http://${peer_name}.${discovery_domain_name}:2379"
-Environment="ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379"
-Environment="ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380"
+Environment="ETCD_ADVERTISE_CLIENT_URLS=https://${peer_name}.${discovery_domain_name}:2379"
+Environment="ETCD_LISTEN_CLIENT_URLS=https://0.0.0.0:2379"
+Environment="ETCD_LISTEN_PEER_URLS=https://0.0.0.0:2380"
 Environment="ETCD_STRICT_RECONFIG_CHECK=true"
 Environment="ETCD_NAME=${peer_name}"
 Environment="ETCD_INITIAL_CLUSTER_STATE=new"
 Environment="ETCD_DISCOVERY_SRV=${discovery_domain_name}"
+Environment="ETCD_TRUSTED_CA_FILE=${ca_cert_path}"
+Environment="ETCD_CERT_FILE=${cert_path}"
+Environment="ETCD_KEY_FILE=${key_path}"
+Environment="ETCD_CLIENT_CERT_AUTH=true"
+Environment="ETCD_PEER_TRUSTED_CA_FILE=${ca_cert_path}"
+Environment="ETCD_PEER_CERT_FILE=${cert_path}"
+Environment="ETCD_PEER_KEY_FILE=${key_path}"
+Environment="ETCD_PEER_CLIENT_CERT_AUTH=true"
 ExecStart=
 ExecStart=/usr/lib/coreos/etcd-wrapper $ETCD_OPTS

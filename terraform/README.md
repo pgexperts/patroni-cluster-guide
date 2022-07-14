@@ -9,6 +9,7 @@ Notable changes include:
 * Removed deprecated template module in favor of templatefile function
 * Uses a local list variable to setup the SRV DNS entry instead of creating
     dummy entries to use as data.
+* Requires TLS auth for peer and client communication
 
 In addition to etcd, this module also:
 * Launches the Patroni/PostgreSQL instances
