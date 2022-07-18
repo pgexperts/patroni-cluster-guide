@@ -82,10 +82,20 @@ NOTE: the quotes are not part of the password.
 ## Check the status on your etcd cluster with `etcdctl`:
 **NOTE:** the etcd instances use flatcar linux and the ssh username is `core`.
 **ALSO** the etcd instances only allow SSH from IP addresses inside the VPC.
+**FINALLY* the etcd instances require certificate based authentication.
 
 On one of the peer-*.etcd3-test instances:
 ```
-docker exec etcd-member /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list"
+docker exec etcd-member /bin/sh -c "export ETCDCTL_API=3 && /usr/local/bin/etcdctl member list --cacert=/etc/ssl/certs/etcd-ca-cert.pem --cert=/etc/ssl/certs/etcd-cert.pem --key=/etc/ssl/certs/etcd-key.pem --endpoints=https://127.0.0.1:2379"
+```
+You should get output that looks like this:
+
+```
+1b7aa21ad72024f0, started, peer-0, https://peer-0.etcd3-test.us-west-2.staging.pgx.internal:2380, https://peer-0.etcd3-test.us-west-2.staging.pgx.internal:2379, false
+7413ddd84d014e29, started, peer-3, https://peer-3.etcd3-test.us-west-2.staging.pgx.internal:2380, https://peer-3.etcd3-test.us-west-2.staging.pgx.internal:2379, false
+b40fa8d4e7d3d464, started, peer-4, https://peer-4.etcd3-test.us-west-2.staging.pgx.internal:2380, https://peer-4.etcd3-test.us-west-2.staging.pgx.internal:2379, false
+e32c8ebba32ed081, started, peer-1, https://peer-1.etcd3-test.us-west-2.staging.pgx.internal:2380, https://peer-1.etcd3-test.us-west-2.staging.pgx.internal:2379, false
+f805e4dbd708abae, started, peer-2, https://peer-2.etcd3-test.us-west-2.staging.pgx.internal:2380, https://peer-2.etcd3-test.us-west-2.staging.pgx.internal:2379, false
 ```
 
 ## Check the status on your patroni cluster with `patronictl`:
