@@ -11,6 +11,9 @@ locals {
                     peer_name             = "peer-${n}"
                     discovery_domain_name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
                     cluster_name          = "${var.role}"
+                    ca_cert_path          = "${var.etcd_ca_cert_path}"
+                    cert_path             = "${var.etcd_cert_path}"
+                    key_path              = "${var.etcd_key_path}"
                   }
                 )
               }
@@ -30,7 +33,7 @@ locals {
 
           certificate_bootstrap_unit = <<-EO3
               ${templatefile("${path.module}/cloudinit/certificate_bootstrap_unit.tfpl", {
-                    etcd_mount_point           = var.etcd_mount_point
+                    ssl_cert_dir               = var.ssl_cert_dir
                     certificate_bootstrap_url  = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.certificate-bootstrap.id}"
                   }
                 )

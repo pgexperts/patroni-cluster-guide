@@ -127,22 +127,28 @@ variable "etcd_cert_owner" {
   default     = "etcd:etcd"
 }
 
+variable "ssl_cert_dir" {
+  description = "The directory that Flatcar linux users for SSL certificates"
+  type        = string
+  default     = "/etc/ssl/certs"
+}
+
 variable "etcd_ca_cert_path" {
   description = "The location to place the CA cert on the etcd hosts."
   type        = string
-  default     = "/var/lib/etcd/ca-cert.pem"
+  default     = "/etc/ssl/certs/etcd-ca-cert.pem"
 }
 
 variable "etcd_key_path" {
   description = "The location to place the CA cert on the etcd hosts."
   type        = string
-  default     = "/var/lib/etcd/key.pem"
+  default     = "/etc/ssl/certs/etcd-key.pem"
 }
 
 variable "etcd_cert_path" {
   description = "The location to place the CA cert on the etcd hosts."
   type        = string
-  default     = "/var/lib/etcd/cert.pem"
+  default     = "/etc/ssl/certs/etcd-cert.pem"
 }
 
 variable "patroni_cert_owner" {

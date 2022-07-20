@@ -16,7 +16,7 @@ resource "aws_route53_zone" "default" {
 
 resource "aws_route53_record" "default" {
   zone_id = aws_route53_zone.default.id
-  name    = "_etcd-server._tcp.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
+  name    = "_etcd-server-ssl._tcp.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   type    = "SRV"
   ttl     = "1"
   records = local.peer_name_list

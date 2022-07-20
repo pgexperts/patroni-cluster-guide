@@ -20,11 +20,14 @@ resource "aws_s3_object" "certificate-bootstrap" {
   bucket = aws_s3_bucket.files.id
   key    = "certificate-bootstrap.sh"
   content = templatefile("${path.module}/templates/certificate-bootstrap.sh", {
-    etcd_mount_point = var.etcd_mount_point
-    ca_cert_pem      = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-ca-cert.id}"
-    key_pem          = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-tls-key.id}"
-    cert_pem         = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-tls-cert.id}"
-    etcd_cert_owner  = var.etcd_cert_owner
+    ssl_cert_dir      = var.ssl_cert_dir
+    ca_cert_pem       = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-ca-cert.id}"
+    key_pem           = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-tls-key.id}"
+    cert_pem          = "s3://${aws_s3_bucket.files.bucket}/${aws_s3_object.etcd-tls-cert.id}"
+    etcd_ca_cert_path = var.etcd_ca_cert_path
+    etcd_key_path     = var.etcd_key_path
+    etcd_cert_path    = var.etcd_cert_path
+    etcd_cert_owner   = var.etcd_cert_owner
     }
   )
   content_type = "text/plain"
