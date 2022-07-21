@@ -32,7 +32,7 @@ resource "aws_instance" "pg-patroni" {
   key_name          = var.aws_sshkey_name
 
   vpc_security_group_ids = [
-    aws_security_group.default.id,
+    aws_security_group.etcd.id,
     aws_security_group.pg-patroni.id
   ]
 
