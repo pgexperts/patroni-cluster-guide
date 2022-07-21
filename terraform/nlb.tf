@@ -1,4 +1,4 @@
-resource "aws_lb" "internal" {
+resource "aws_lb" "etcd" {
   name               = "${var.role}-internal-${var.environment}"
   subnets            = data.aws_subnets.default.ids
   load_balancer_type = "network"
@@ -13,7 +13,7 @@ resource "aws_lb" "internal" {
   }
 }
 
-resource "aws_lb_target_group" "default" {
+resource "aws_lb_target_group" "etcd" {
   name     = "${var.role}-internal-${var.environment}"
   port     = 2379
   protocol = "TCP"
@@ -33,25 +33,25 @@ resource "aws_lb_target_group" "default" {
   }
 }
 
-resource "aws_lb_listener" "internal" {
-  load_balancer_arn = aws_lb.internal.arn
+resource "aws_lb_listener" "etcd" {
+  load_balancer_arn = aws_lb.etcd.arn
   port              = 2379
   protocol          = "TCP"
 
   default_action {
-    target_group_arn = aws_lb_target_group.default.arn
+    target_group_arn = aws_lb_target_group.etcd.arn
     type             = "forward"
   }
 }
 
-resource "aws_route53_record" "internal" {
+resource "aws_route53_record" "etcd-lb" {
   zone_id = aws_route53_zone.default.id
   name    = "${var.role}-lb.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   type    = "A"
 
   alias {
-    name                   = aws_lb.internal.dns_name
-    zone_id                = aws_lb.internal.zone_id
+    name                   = aws_lb.etcd.dns_name
+    zone_id                = aws_lb.etcd.zone_id
     evaluate_target_health = false
   }
 }

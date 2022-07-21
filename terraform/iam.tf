@@ -1,4 +1,4 @@
-resource "aws_iam_role" "default" {
+resource "aws_iam_role" "etcd" {
   name = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
 
   assume_role_policy = <<EOF
@@ -18,16 +18,16 @@ resource "aws_iam_role" "default" {
 EOF
 }
 
-resource "aws_iam_instance_profile" "default" {
+resource "aws_iam_instance_profile" "etcd" {
   name       = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   role       = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
-  depends_on = [aws_iam_role.default]
+  depends_on = [aws_iam_role.etcd]
 }
 
-resource "aws_iam_role_policy" "default" {
+resource "aws_iam_role_policy" "etcd" {
   name       = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
-  role       = aws_iam_role.default.name
-  depends_on = [aws_iam_role.default]
+  role       = aws_iam_role.etcd.name
+  depends_on = [aws_iam_role.etcd]
 
   lifecycle {
     create_before_destroy = true

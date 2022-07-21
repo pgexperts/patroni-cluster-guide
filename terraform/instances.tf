@@ -66,7 +66,7 @@ resource "aws_instance" "pg-patroni" {
   }
 
   depends_on = [
-    aws_autoscaling_group.default, aws_lb.internal, aws_route53_record.internal
+    aws_autoscaling_group.etcd, aws_lb.etcd, aws_route53_record.etcd-lb
   ]
 }
 
