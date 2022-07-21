@@ -1,4 +1,4 @@
-resource "aws_security_group" "default" {
+resource "aws_security_group" "etcd" {
   name        = "${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
   description = "ASG-${var.role}"
   vpc_id      = data.aws_vpc.default.id
