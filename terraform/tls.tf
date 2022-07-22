@@ -41,11 +41,11 @@ resource "tls_private_key" "etcd" {
 resource "tls_cert_request" "etcd" {
   private_key_pem = tls_private_key.etcd.private_key_pem
 
-  dns_names    = concat(local.etcd_name_list, [aws_route53_record.internal.name])
+  dns_names    = concat(local.etcd_name_list, [aws_route53_record.etcd-lb.name])
   ip_addresses = ["127.0.0.1"]
 
   subject {
-    common_name  = aws_route53_record.internal.name
+    common_name  = aws_route53_record.etcd-lb.name
     organization = var.organization_name
   }
 }

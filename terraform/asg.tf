@@ -1,14 +1,14 @@
-resource "aws_launch_configuration" "default" {
+resource "aws_launch_configuration" "etcd" {
   count                       = var.cluster_size
   name_prefix                 = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}-"
   image_id                    = var.ami
   instance_type               = var.instance_type
   ebs_optimized               = true
-  iam_instance_profile        = aws_iam_instance_profile.default.id
+  iam_instance_profile        = aws_iam_instance_profile.etcd.id
   key_name                    = var.aws_sshkey_name
   enable_monitoring           = false
   associate_public_ip_address = true
-  security_groups             = [aws_security_group.default.id]
+  security_groups             = [aws_security_group.etcd.id]
   user_data                   = element(local.my_cloud_init_config, count.index)
 
   lifecycle {
@@ -16,7 +16,7 @@ resource "aws_launch_configuration" "default" {
   }
 }
 
-resource "aws_autoscaling_group" "default" {
+resource "aws_autoscaling_group" "etcd" {
   count                     = var.cluster_size
   availability_zones        = ["${element(var.azs, count.index)}"]
   name                      = "peer-${count.index}.${var.role}.${var.region}.${var.environment}.${var.dns["domain_name"]}"
@@ -26,8 +26,8 @@ resource "aws_autoscaling_group" "default" {
   health_check_grace_period = 300
   health_check_type         = "EC2"
   force_delete              = true
-  launch_configuration      = element(aws_launch_configuration.default.*.name, count.index)
-  target_group_arns         = [aws_lb_target_group.default.arn]
+  launch_configuration      = element(aws_launch_configuration.etcd.*.name, count.index)
+  target_group_arns         = [aws_lb_target_group.etcd.arn]
   wait_for_capacity_timeout = "0"
 
   tag {
