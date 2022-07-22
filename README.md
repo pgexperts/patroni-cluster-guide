@@ -126,7 +126,7 @@ instances.
 
 ## Check the postgresql connectivity through the load balancer
 Port 5432 will be the primary and 5433 will be the replicas.
-**NOTE:** You'll need to set a password for the postgres user on the primary first.
+You'll need the password generated in the `terraform apply` step.
 ```
 psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5432 -U postgres postgres
 psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5433 -U postgres postgres
