@@ -132,6 +132,9 @@ psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5432 -U postgres postgre
 psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5433 -U postgres postgres
 ```
 
+**NOTE:** You cannot connect through the load balancer to the same host as you are on. That is, if you are on the primary and connect to port 5432 on the load balancer, your connection will hang. This is because the target group preserves the client IP address, so it seems as though you are trying to make a connection to yourself, though in actuality, the connection is going through the load balancer, so the tcp stack ignores the connection.
+
+
 
 ## Here's how you would configure the load balancers by hand in the console
 
@@ -228,10 +231,6 @@ After a little while, you should see that the healthy target on the `patroni-pos
 
 ![Healthy primary](/images/target-health-primary.png)
 ![Healthy follower](/images/target-health-follower.png)
-
-## Test the connection
-**NOTE:** You cannot connect through the load balancer to the same host as you are on. That is, if you are on the primary and connect to port 5432 on the load balancer, your connection will hang. This is because the target group preserves the client IP address, so it seems as though you are trying to make a connection to yourself, though in actuality, the connection is going through the load balancer, so the tcp stack ignores the connection.
-
 
 # References:
 
