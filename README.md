@@ -13,11 +13,11 @@ The etcd part of this terraform is based heavily on https://github.com/monzo/etc
 post: [Very Robust etcd](https://monzo.com/blog/2017/11/29/very-robust-etcd/)
 
 Notable changes include:
-* Using a NLB instead of a classic ELB
-* Launching in an existing VPC instead of defining a new one
-* Not using a default security group
+* Uses a NLB instead of a classic ELB
+* Launches in an existing VPC instead of defining a new one
+* No longer uses a default security group
   - Thus SSH access to the hosts is only allowed from the VPC
-* Removed deprecated template module in favor of templatefile function
+* Removes deprecated template module in favor of templatefile function
 * Uses a local list variable to setup the SRV DNS entry instead of creating
     dummy entries to use as data.
 * Requires TLS auth for peer and client communication
