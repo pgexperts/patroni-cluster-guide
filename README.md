@@ -1,4 +1,34 @@
 # patroni-cluster-guide
+This repository is meant as a HOWTO for bootstrapping a Patroni cluster using a
+highly available `etcd` cluster as the distributed consensus store. It includes
+terraform that will launch and configure the entire cluster including load
+balancers fronting the `etcd` cluster and the `postgresql` cluster.
+
+Instructions are included for storing your AWS API keys in 1password to use
+with the `awscli` and `terraform`. This is not required, but it is highly
+recommended not to store your AWS API keys unencrypted on your local
+filesystem.
+
+The etcd part of this terraform is based heavily on https://github.com/monzo/etcd3-terraform and this blog
+post: [Very Robust etcd](https://monzo.com/blog/2017/11/29/very-robust-etcd/)
+
+Notable changes include:
+* Using a NLB instead of a classic ELB
+* Launching in an existing VPC instead of defining a new one
+* Not using a default security group
+  - Thus SSH access to the hosts is only allowed from the VPC
+* Removed deprecated template module in favor of templatefile function
+* Uses a local list variable to setup the SRV DNS entry instead of creating
+    dummy entries to use as data.
+* Requires TLS auth for peer and client communication
+
+In addition to etcd, this module also:
+* Launches the Patroni/PostgreSQL instances
+* Configures them via user-data
+* Adds them to LB Target Groups such that the NLB listeners on port 5432 and
+    5433 forward to the primary and replica respectively
+
+The TLS part of this terraform is based heavily on https://github.com/hashicorp/terraform-aws-vault/tree/master/modules/private-tls-cert
 
 ## Install terraform via asdf
 ```
