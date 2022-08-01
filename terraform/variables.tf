@@ -56,7 +56,6 @@ variable "vpc_id" {
 }
 
 variable "aws_sshkey_name" {
-  default = "jeff"
 }
 
 variable "organization_name" {
