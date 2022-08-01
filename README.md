@@ -91,10 +91,10 @@ Enter `aws_secret_access_key` on the top of the field and the key value in the b
 ```
 cd terraform
 terraform init
-terraform apply -var aws_sshkey_name="jeff"
+terraform apply -var aws_sshkey_name="mysshkeyname"
 ```
 
-(Where "jeff" above is replaced by your SSH key name as listed in ec2's Key
+(Where "mysshkeyname" above is replaced by your SSH key name as listed in ec2's Key
 Pairs.)
 
 You should eventually see some output that looks similar to this:
@@ -195,7 +195,7 @@ psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5433 -U postgres postgre
 * Add appropriate tags, for example:
   * project:patroni
   * service:postgresql
-  * owner:jeff
+  * owner:mysshkeyname
 * Click Next
 * Check the boxes next to the postgresql/patroni servers
 * Make sure in Ports for selected instances, it is 5432
@@ -225,7 +225,7 @@ psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5433 -U postgres postgre
 * Add appropriate tags, for example:
   * project:patroni
   * service:postgresql
-  * owner:jeff
+  * owner:mysshkeyname
 * Click Next
 * Check the boxes next to the postgresql/patroni servers
 * Make sure in Ports for selected instances, it is 5432
@@ -254,7 +254,7 @@ psql -h postgresql-lb.us-west-2.staging.pgx.internal -p 5433 -U postgres postgre
 * Add appropriate tags, for example:
   * project:patroni
   * service:postgresql
-  * owner:jeff
+  * owner:mysshkeyname
 * Click Create load balancer
 
 ![Click load balancers](/images/load-balancers.png)
